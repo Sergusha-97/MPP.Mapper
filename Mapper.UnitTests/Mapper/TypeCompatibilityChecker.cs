@@ -34,7 +34,9 @@ namespace Mapper
         private static bool IsCompatiblePrimitives(Type source, Type destination)
         {
             var result = false;
-            if (source.IsValueType && source.IsPrimitive && destination.IsValueType && destination.IsPrimitive)
+            if (source.IsValueType && source.IsPrimitive && 
+                destination.IsValueType && destination.IsPrimitive &&
+                _types.ContainsKey(source))
             {
                 result =  _types[source].Contains(destination);
             }

@@ -23,7 +23,8 @@ namespace Mapper
             var ctor = Expression.New(creatingType);
             var valueAssignments = GetValuesAssignments(propertiesList, lambdaParam);
             var memberInit = Expression.MemberInit(ctor, valueAssignments);
-            return Expression.Lambda<Func<TSource, TDestination>>(memberInit, lambdaParam).Compile();
+            return Expression.Lambda<Func<TSource, TDestination>>
+                   (memberInit, lambdaParam).Compile();
         }
 
         private IEnumerable<MemberBinding> GetValuesAssignments
