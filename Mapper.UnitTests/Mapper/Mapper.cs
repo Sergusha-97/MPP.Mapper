@@ -33,6 +33,10 @@ namespace Mapper
         }
         public TDestination Map<TSource, TDestination>(TSource source) where  TDestination : new()
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
             _sourceType = typeof(TSource);
             _destinationType = typeof(TDestination);
             var mappingElement = CreateMappingElement();
@@ -40,8 +44,12 @@ namespace Mapper
             {
                 return ((Func<TSource,TDestination>)_cash.Get(mappingElement))(source);
             }
-            var properties = GetPropertyPairsList();
-            Func<TSource, TDestination> lambda = _controller.GenerateFunc<TSource, TDestination>(source, properties);
+            List<PropertiesPair> properties = GetPropertyPairsList();
+            if (properties.Count == 0)
+            {
+                return default(TDestination);
+            }
+            Func<TSource, TDestination> lambda = _controller.GenerateFunc<TSource, TDestination>(properties);
             _cash.Add(mappingElement,lambda);
             return lambda(source);
         }
@@ -55,7 +63,7 @@ namespace Mapper
           };   
         }
 
-        private IEnumerable<PropertiesPair> GetPropertyPairsList()
+        private List<PropertiesPair> GetPropertyPairsList()
         {
             var properties = 
                 (from destProperty

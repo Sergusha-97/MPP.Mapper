@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Mapper
 {
-    interface IPropertiesPair
+    public interface IPropertiesPair
     {
          PropertyInfo SourceProperty { get;  }
          PropertyInfo DestinationProperty { get; }

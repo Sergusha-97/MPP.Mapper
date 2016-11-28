@@ -8,7 +8,7 @@ namespace Mapper
 {
     public interface IMappingController
     {
-        Func<TSource,TDestination> GenerateFunc<TSource, TDestination>(TSource source,IEnumerable<IPropertiesPair> propertiesList ) 
+        Func<TSource,TDestination> GenerateFunc<TSource, TDestination>(IEnumerable<IPropertiesPair> propertiesList ) 
             where TDestination : new();
     }
 }
