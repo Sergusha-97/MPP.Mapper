@@ -13,6 +13,24 @@ namespace Mapper
         private readonly IMappingController _controller;
         private Type _sourceType;
         private Type _destinationType;
+        private MapperConfiguration _configuration;
+
+        public Mapper(MapperConfiguration configuration) : this(new MappingCash(), new MappingController())
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+            _configuration = configuration;
+        }
+        public Mapper(IMappingCash cash, IMappingController controller, MapperConfiguration configuration) : this(cash,controller)
+        {
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+            _configuration = configuration;
+        }
         public Mapper(IMappingCash cash, IMappingController controller)
         {
             if (cash == null)
@@ -45,6 +63,10 @@ namespace Mapper
                 return ((Func<TSource,TDestination>)_cash.Get(mappingElement))(source);
             }
             List<PropertiesPair> properties = GetPropertyPairsList();
+            if (_configuration != null)
+            {
+               properties.AddRange(_configuration.GetPropertiesPairsList<TSource, TDestination>());
+            }
             if (properties.Count == 0)
             {
                 return default(TDestination);
