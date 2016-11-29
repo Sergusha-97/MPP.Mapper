@@ -46,7 +46,7 @@ namespace Mapper
         private static bool IsCompatibleRefTypes(Type source, Type destination)
         {
             var result = false;
-            if (source.IsClass && !source.IsAbstract && destination.IsValueType && !destination.IsAbstract)
+            if (source.IsClass && !source.IsAbstract && destination.IsClass && !destination.IsAbstract)
             {
                 result = destination.IsAssignableFrom(source);
             }

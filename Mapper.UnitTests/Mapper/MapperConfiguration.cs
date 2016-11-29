@@ -16,8 +16,9 @@ namespace Mapper
         {
             _configDict = new Dictionary<MappingElement, List<PropertiesPair>>();
         }
-        public IMapperConfiguration Register<TSource, TDestination, TProperty>(Expression<Func<TSource, TProperty>> sourcePropertyExpr,
-            Expression<Func<TDestination, TProperty>> destPropertyExpr) where TDestination : new()
+        public MapperConfiguration Register<TSource, TDestination>
+            (Expression<Func<TSource, object>> sourcePropertyExpr,
+            Expression<Func<TDestination, object>> destPropertyExpr) where TDestination : new()
         {
             if (sourcePropertyExpr == null)
             {
@@ -41,8 +42,8 @@ namespace Mapper
             }
             MappingElement mappingElement = new MappingElement()
             {
-                Source = sourceType,
-                Destination = destType
+                Source = typeof(TSource),
+                Destination = typeof(TDestination)
             };
             PropertiesPair propertiesPair = new PropertiesPair(sourceProperty,destProperty);
             if (_configDict.ContainsKey(mappingElement))
@@ -62,11 +63,20 @@ namespace Mapper
         private  PropertyInfo GetPropertyInfo<TSource, TProperty>(
                     Expression<Func<TSource, TProperty>> propertyLambda)
         {
-            Type type = typeof(TSource);
             MemberExpression member = propertyLambda.Body as MemberExpression;
             if (member == null)
-                throw new ArgumentException(
-                    $"Expression '{propertyLambda.ToString()}' refers to a method, not a property.");
+            {
+                var body = propertyLambda.Body as UnaryExpression;
+                if (body != null)
+                {
+                    member =  (MemberExpression)body.Operand;
+                }
+                else
+                {
+                    throw new ArgumentException(
+                        $"Expression '{propertyLambda.ToString()}' refers to a method, not a property.");
+                }
+            }
 
             PropertyInfo propInfo = member.Member as PropertyInfo;
             if (propInfo == null)
